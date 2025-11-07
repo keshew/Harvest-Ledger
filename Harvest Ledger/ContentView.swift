@@ -988,13 +988,13 @@ struct SettingsView: View {
     }
 
     private func openPrivacyPolicy() {
-        if let url = URL(string: "https://example.com/privacy") {
+        if let url = URL(string: "https://www.freeprivacypolicy.com/live/9d7a6e18-f2b8-4d8b-b691-c804f6f412d9") {
             UIApplication.shared.open(url)
         }
     }
 
     private func openSupportURL() {
-        if let url = URL(string: "https://example.com/support") {
+        if let url = URL(string: "https://docs.google.com/document/d/e/2PACX-1vTQFyJiEKJaDEqSKKkmrkx3CNMc80joQ-eUZ_K4kJc-jQIScXoc_2p9PUgY6t1DWIORvUXAFoKOo7m1/pub") {
             UIApplication.shared.open(url)
         }
     }
