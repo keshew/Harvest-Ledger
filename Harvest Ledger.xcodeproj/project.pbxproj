@@ -6,14 +6,65 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		86D162BC2EC640EB0020A961 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 86D162BB2EC640EB0020A961 /* FirebaseCore */; };
+		86D162BE2EC640EB0020A961 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 86D162BD2EC640EB0020A961 /* FirebaseMessaging */; };
+		86D162D22EC643800020A961 /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 86D162D12EC643800020A961 /* AppsFlyerLib */; };
+		86D162DE2EC645120020A961 /* NotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 86D162D72EC645120020A961 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		86D162E62EC645260020A961 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 86D162E52EC645260020A961 /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		86D162DC2EC645120020A961 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 863D46752EB8EC2E0078CB2E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86D162D62EC645120020A961;
+			remoteInfo = NotificationService;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		86D162E32EC645120020A961 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				86D162DE2EC645120020A961 /* NotificationService.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		863D467D2EB8EC2E0078CB2E /* Harvest Ledger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Harvest Ledger.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86D162D72EC645120020A961 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86D162DF2EC645120020A961 /* Exceptions for "NotificationService" folder in "NotificationService" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 86D162D62EC645120020A961 /* NotificationService */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		863D467F2EB8EC2E0078CB2E /* Harvest Ledger */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Harvest Ledger";
+			sourceTree = "<group>";
+		};
+		86D162D82EC645120020A961 /* NotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86D162DF2EC645120020A961 /* Exceptions for "NotificationService" folder in "NotificationService" target */,
+			);
+			path = NotificationService;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +74,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86D162BE2EC640EB0020A961 /* FirebaseMessaging in Frameworks */,
+				86D162BC2EC640EB0020A961 /* FirebaseCore in Frameworks */,
+				86D162D22EC643800020A961 /* AppsFlyerLib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86D162D42EC645120020A961 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86D162E62EC645260020A961 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +95,8 @@
 			isa = PBXGroup;
 			children = (
 				863D467F2EB8EC2E0078CB2E /* Harvest Ledger */,
+				86D162D82EC645120020A961 /* NotificationService */,
+				86D162E42EC645260020A961 /* Frameworks */,
 				863D467E2EB8EC2E0078CB2E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +105,16 @@
 			isa = PBXGroup;
 			children = (
 				863D467D2EB8EC2E0078CB2E /* Harvest Ledger.app */,
+				86D162D72EC645120020A961 /* NotificationService.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		86D162E42EC645260020A961 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,20 +127,48 @@
 				863D46792EB8EC2E0078CB2E /* Sources */,
 				863D467A2EB8EC2E0078CB2E /* Frameworks */,
 				863D467B2EB8EC2E0078CB2E /* Resources */,
+				86D162E32EC645120020A961 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				86D162DD2EC645120020A961 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				863D467F2EB8EC2E0078CB2E /* Harvest Ledger */,
 			);
 			name = "Harvest Ledger";
 			packageProductDependencies = (
+				86D162BB2EC640EB0020A961 /* FirebaseCore */,
+				86D162BD2EC640EB0020A961 /* FirebaseMessaging */,
+				86D162D12EC643800020A961 /* AppsFlyerLib */,
 			);
 			productName = "Harvest Ledger";
 			productReference = 863D467D2EB8EC2E0078CB2E /* Harvest Ledger.app */;
 			productType = "com.apple.product-type.application";
+		};
+		86D162D62EC645120020A961 /* NotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86D162E02EC645120020A961 /* Build configuration list for PBXNativeTarget "NotificationService" */;
+			buildPhases = (
+				86D162D32EC645120020A961 /* Sources */,
+				86D162D42EC645120020A961 /* Frameworks */,
+				86D162D52EC645120020A961 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				86D162D82EC645120020A961 /* NotificationService */,
+			);
+			name = NotificationService;
+			packageProductDependencies = (
+				86D162E52EC645260020A961 /* FirebaseMessaging */,
+			);
+			productName = NotificationService;
+			productReference = 86D162D72EC645120020A961 /* NotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +183,9 @@
 					863D467C2EB8EC2E0078CB2E = {
 						CreatedOnToolsVersion = 16.2;
 					};
+					86D162D62EC645120020A961 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
 			buildConfigurationList = 863D46782EB8EC2E0078CB2E /* Build configuration list for PBXProject "Harvest Ledger" */;
@@ -94,18 +197,30 @@
 			);
 			mainGroup = 863D46742EB8EC2E0078CB2E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				86D162BA2EC640EB0020A961 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				86D162D02EC643800020A961 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 863D467E2EB8EC2E0078CB2E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				863D467C2EB8EC2E0078CB2E /* Harvest Ledger */,
+				86D162D62EC645120020A961 /* NotificationService */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		863D467B2EB8EC2E0078CB2E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86D162D52EC645120020A961 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +237,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		86D162D32EC645120020A961 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		86D162DD2EC645120020A961 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86D162D62EC645120020A961 /* NotificationService */;
+			targetProxy = 86D162DC2EC645120020A961 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		863D46892EB8EC2F0078CB2E /* Debug */ = {
@@ -249,12 +379,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Harvest Ledger/Harvest Ledger.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Harvest Ledger/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Harvest-Ledger-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires access to the microphone to record audio.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We collect usage data to enhance app performance, improve features, and provide a better user experience. Your information remains secure and is not shared with third parties for advertising purposes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -265,7 +400,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -283,12 +418,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Harvest Ledger/Harvest Ledger.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Harvest Ledger/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Harvest-Ledger-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos and record videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires access to the microphone to record audio.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We collect usage data to enhance app performance, improve features, and provide a better user experience. Your information remains secure and is not shared with third parties for advertising purposes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,7 +439,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -309,6 +449,66 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		86D162E12EC645120020A961 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationService/NotificationService.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PH7J58Y95Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = harvest_notif_profile;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		86D162E22EC645120020A961 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationService/NotificationService.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = PH7J58Y95Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = harvest_notif_profile;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -333,7 +533,58 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		86D162E02EC645120020A961 /* Build configuration list for PBXNativeTarget "NotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86D162E12EC645120020A961 /* Debug */,
+				86D162E22EC645120020A961 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		86D162BA2EC640EB0020A961 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.5.0;
+			};
+		};
+		86D162D02EC643800020A961 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.17.7;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		86D162BB2EC640EB0020A961 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86D162BA2EC640EB0020A961 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		86D162BD2EC640EB0020A961 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86D162BA2EC640EB0020A961 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		86D162D12EC643800020A961 /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86D162D02EC643800020A961 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
+		86D162E52EC645260020A961 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86D162BA2EC640EB0020A961 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 863D46752EB8EC2E0078CB2E /* Project object */;
 }
