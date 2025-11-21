@@ -1589,49 +1589,53 @@ class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
     }
     
     func showControls() async {
-        let content = UserDefaults.standard.string(forKey: "config_url") ?? ""
+        let configURL = UserDefaults.standard.string(forKey: "config_url") ?? ""
+        let lastURLString = UserDefaults.standard.string(forKey: "lastURL")
+
+        let initialURLString = lastURLString?.isEmpty == false ? lastURLString : configURL
+        guard let initialURL = URL(string: initialURLString ?? "") else { return }
         
-        if !content.isEmpty, let url = URL(string: content) {
-            loadCookie()
-            
-            await MainActor.run {
-                let webConfiguration = WKWebViewConfiguration()
-                webConfiguration.mediaTypesRequiringUserActionForPlayback = []
-                webConfiguration.allowsInlineMediaPlayback = true
-                let source: String = """
+        loadCookie()
+
+        await MainActor.run {
+            let webConfiguration = WKWebViewConfiguration()
+            webConfiguration.mediaTypesRequiringUserActionForPlayback = []
+            webConfiguration.allowsInlineMediaPlayback = true
+
+            let source: String = """
                 var meta = document.createElement('meta');
                 meta.name = 'viewport';
                 meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
                 document.getElementsByTagName('head')[0].appendChild(meta);
-                """
-                let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-                webConfiguration.userContentController.addUserScript(script)
-                
-                self.czxasd = WKWebView(frame: .zero, configuration: webConfiguration)
-                self.czxasd.customUserAgent = asdqw
-                self.czxasd.navigationDelegate = self
-                self.czxasd.uiDelegate = self
-                
-                self.czxasd.scrollView.isScrollEnabled = true
-                self.czxasd.scrollView.pinchGestureRecognizer?.isEnabled = false
-                self.czxasd.scrollView.keyboardDismissMode = .interactive
-                self.czxasd.scrollView.minimumZoomScale = 1.0
-                self.czxasd.scrollView.maximumZoomScale = 1.0
-                self.czxasd.allowsBackForwardNavigationGestures = true
-                view.backgroundColor = .black
-                self.view.addSubview(self.czxasd)
-                self.czxasd.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    self.czxasd.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-                    self.czxasd.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
-                    self.czxasd.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-                    self.czxasd.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
-                ])
-                
-                self.loadInfo(with: url)
-            }
+            """
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            webConfiguration.userContentController.addUserScript(script)
+
+            self.czxasd = WKWebView(frame: .zero, configuration: webConfiguration)
+            self.czxasd.customUserAgent = asdqw
+            self.czxasd.navigationDelegate = self
+            self.czxasd.uiDelegate = self
+
+            self.czxasd.scrollView.isScrollEnabled = true
+            self.czxasd.scrollView.pinchGestureRecognizer?.isEnabled = false
+            self.czxasd.scrollView.keyboardDismissMode = .interactive
+            self.czxasd.scrollView.minimumZoomScale = 1.0
+            self.czxasd.scrollView.maximumZoomScale = 1.0
+            self.czxasd.allowsBackForwardNavigationGestures = true
+            view.backgroundColor = .black
+            self.view.addSubview(self.czxasd)
+            self.czxasd.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                self.czxasd.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+                self.czxasd.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+                self.czxasd.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                self.czxasd.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+            
+            self.loadInfo(with: initialURL)
         }
     }
+
     
     func loadInfo(with url: URL) {
         czxasd.load(URLRequest(url: url))
@@ -1639,6 +1643,7 @@ class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         saveCookie()
+        UserDefaults.standard.set(webView.url?.absoluteString, forKey: "lastURL")
     }
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {

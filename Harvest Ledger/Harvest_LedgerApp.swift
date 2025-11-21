@@ -13,6 +13,7 @@ struct Harvest_LedgerApp: App {
     var body: some Scene {
         WindowGroup {
             LoadingView()
+                .preferredColorScheme(.light)
         }
     }
 }
@@ -26,6 +27,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, AppsFlyerLibDelegate, Messag
         completionHandler([.list, .banner])
     }
     
+    func applicationWillTerminate(_ application: UIApplication) {
+        UserDefaults.standard.removeObject(forKey: "lastURL")
+    }
+
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
