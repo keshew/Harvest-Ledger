@@ -1585,16 +1585,14 @@ class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     func showControls() async {
         let configURL = UserDefaults.standard.string(forKey: "config_url") ?? ""
         let lastURLString = UserDefaults.standard.string(forKey: "lastURL")
-
         let initialURLString = lastURLString?.isEmpty == false ? lastURLString : configURL
         guard let initialURL = URL(string: initialURLString ?? "") else { return }
-        
+
         loadCookie()
 
         await MainActor.run {
@@ -1603,10 +1601,10 @@ class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
             webConfiguration.allowsInlineMediaPlayback = true
 
             let source: String = """
-                var meta = document.createElement('meta');
-                meta.name = 'viewport';
-                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-                document.getElementsByTagName('head')[0].appendChild(meta);
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+            document.getElementsByTagName('head')[0].appendChild(meta);
             """
             let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
             webConfiguration.userContentController.addUserScript(script)
@@ -1631,8 +1629,28 @@ class CreateDetail: UIViewController, WKNavigationDelegate, WKUIDelegate {
                 self.czxasd.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
                 self.czxasd.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
             ])
-            
+
             self.loadInfo(with: initialURL)
+
+            if let scrollY = UserDefaults.standard.object(forKey: "lastScrollY") as? Double {
+                self.czxasd.evaluateJavaScript("window.scrollTo(0, \(scrollY))", completionHandler: nil)
+            }
+
+            NotificationCenter.default.addObserver(self,
+                selector: #selector(saveWebViewState),
+                name: UIApplication.didEnterBackgroundNotification,
+                object: nil)
+        }
+    }
+
+    @objc func saveWebViewState() {
+        if let url = czxasd.url?.absoluteString {
+            UserDefaults.standard.set(url, forKey: "lastURL")
+        }
+        czxasd.evaluateJavaScript("window.scrollY") { (value, error) in
+            if let scrollY = value as? Double {
+                UserDefaults.standard.set(scrollY, forKey: "lastScrollY")
+            }
         }
     }
 

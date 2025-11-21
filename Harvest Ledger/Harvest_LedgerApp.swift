@@ -29,6 +29,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, AppsFlyerLibDelegate, Messag
     
     func applicationWillTerminate(_ application: UIApplication) {
         UserDefaults.standard.removeObject(forKey: "lastURL")
+        UserDefaults.standard.removeObject(forKey: "lastScrollY")
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
