@@ -27,11 +27,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, AppsFlyerLibDelegate, Messag
         completionHandler([.list, .banner])
     }
     
-    func applicationWillTerminate(_ application: UIApplication) {
-        UserDefaults.standard.removeObject(forKey: "lastURL")
-        UserDefaults.standard.removeObject(forKey: "lastScrollY")
-    }
-
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
