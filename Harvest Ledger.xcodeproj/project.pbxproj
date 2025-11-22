@@ -44,6 +44,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		86A83EBC2ED0B5A8002C632B /* Exceptions for "Harvest Ledger" folder in "Harvest Ledger" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Harvest-Ledger-Info.plist",
+			);
+			target = 863D467C2EB8EC2E0078CB2E /* Harvest Ledger */;
+		};
 		86D162DF2EC645120020A961 /* Exceptions for "NotificationService" folder in "NotificationService" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -56,6 +63,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		863D467F2EB8EC2E0078CB2E /* Harvest Ledger */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				86A83EBC2ED0B5A8002C632B /* Exceptions for "Harvest Ledger" folder in "Harvest Ledger" target */,
+			);
 			path = "Harvest Ledger";
 			sourceTree = "<group>";
 		};
@@ -386,7 +396,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Harvest-Ledger-Info.plist";
+				INFOPLIST_FILE = "Harvest Ledger/Harvest-Ledger-Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos and record videos.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires access to the microphone to record audio.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We collect usage data to enhance app performance, improve features, and provide a better user experience. Your information remains secure and is not shared with third parties for advertising purposes.";
@@ -400,7 +410,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -425,7 +435,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Harvest-Ledger-Info.plist";
+				INFOPLIST_FILE = "Harvest Ledger/Harvest-Ledger-Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to take photos and record videos.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires access to the microphone to record audio.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We collect usage data to enhance app performance, improve features, and provide a better user experience. Your information remains secure and is not shared with third parties for advertising purposes.";
@@ -439,7 +449,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -470,7 +480,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -500,7 +510,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 1.5.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.app.harvestleadgerrsharvest.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
